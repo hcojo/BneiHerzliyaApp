@@ -8,10 +8,30 @@ import re
 st.set_page_config(page_title="לוח אירועים בני הרצליה", layout="centered")
 st.markdown("""
     <style>
+        /* Base RTL and layout */
         .stApp { direction: rtl; text-align: right; }
         .stSelectbox label { text-align: right; width: 100%; }
-        /* Make the table look good on mobile */
-        [data-testid="stDataFrame"] { width: 100%; } 
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            /* Make text slightly smaller to fit better on phones */
+            html, body, [class*="css"]  {
+                font-size: 14px !important;
+            }
+            
+            /* Ensure the selectbox dropdown fits on screen */
+            .stSelectbox > div > div > div {
+                font-size: 14px;
+            }
+            
+            /* Adjust padding for mobile */
+            .block-container {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -111,4 +131,19 @@ if df is not None and col_mapping['target']:
         st.success(f"נמצאו {len(final_df)} אירועים עבור: {selected_group}")
         
         # Display the table
-        st.dataframe(final_df, hide_index=True, use_container_width=True)
+        #st.dataframe(final_df, hide_index=True, use_container_width=True)
+        st.write("---") # Visual separator
+        for index, row in final_df.iterrows():
+            with st.container():
+                # Make the Event name stand out
+                st.subheader(row.get("אירוע", "ללא שם אירוע")) 
+                
+                # Display the details below it
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write(f"**מיקום:** {row.get('מיקום', '')}")
+                with col2:
+                    st.write(f"**תאריך:** {row.get('שבוע/תאריך', '')}")
+                
+                st.write(f"**קבוצות:** {row.get('קבוצות משתתפות', '')}")
+                st.write("---") # Separator between events
