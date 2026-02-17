@@ -8,28 +8,40 @@ import re
 st.set_page_config(page_title="לוח אירועים בני הרצליה", layout="centered")
 st.markdown("""
     <style>
-        /* Base RTL and layout */
-        .stApp { direction: rtl; text-align: right; }
-        .stSelectbox label { text-align: right; width: 100%; }
+        /* 1. Global RTL Direction */
+        .stApp { 
+            direction: rtl; 
+        }
         
-        /* Mobile-specific adjustments */
+        /* 2. Force Right Alignment for all Text, Headers, and Markdown */
+        [data-testid="stMarkdownContainer"], 
+        [data-testid="stMarkdownContainer"] * {
+            text-align: right !important;
+            direction: rtl !important;
+        }
+        
+        /* 3. Dropdown Menu Fixes */
+        .stSelectbox label { 
+            text-align: right !important; 
+            width: 100%; 
+        }
+        [data-baseweb="select"] {
+            direction: rtl;
+        }
+        
+        /* 4. Success/Error Messages (Alerts) */
+        [data-testid="stAlert"] * {
+            text-align: right !important;
+            direction: rtl !important;
+        }
+        
+        /* 5. Mobile Adjustments */
         @media (max-width: 768px) {
-            /* Make text slightly smaller to fit better on phones */
-            html, body, [class*="css"]  {
+            html, body, [class*="css"] {
                 font-size: 14px !important;
             }
-            
-            /* Ensure the selectbox dropdown fits on screen */
-            .stSelectbox > div > div > div {
-                font-size: 14px;
-            }
-            
-            /* Adjust padding for mobile */
             .block-container {
-                padding-top: 2rem;
-                padding-bottom: 2rem;
-                padding-left: 1rem;
-                padding-right: 1rem;
+                padding: 1.5rem 1rem !important;
             }
         }
     </style>
@@ -136,7 +148,7 @@ if df is not None and col_mapping['target']:
         for index, row in final_df.iterrows():
             with st.container():
                 # Make the Event name stand out
-                st.subheader(row.get("אירוע", "ללא שם אירוע")) 
+                st.markdown(f"**{row.get('אירוע', 'ללא שם אירוע')}**")
                 
                 # Display the details below it
                 col1, col2 = st.columns(2)
@@ -146,4 +158,5 @@ if df is not None and col_mapping['target']:
                     st.write(f"**תאריך:** {row.get('שבוע/תאריך', '')}")
                 
                 st.write(f"**קבוצות:** {row.get('קבוצות משתתפות', '')}")
-                st.write("---") # Separator between events
+                st.markdown("<hr style='margin-top: 5px; margin-bottom: 15px; border: 0; border-top: 1px solid #e6e6e6;'>", unsafe_allow_html=True)
+                #st.write("---") # Separator between events
